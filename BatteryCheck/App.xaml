@@ -1,0 +1,19 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Application xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="BatteryCheck.App">
+    <Application.Resources>
+      <ResourceDictionary>
+         <!-- gemeinsame Ressourcen für die gesamte App -->
+
+
+         <!-- eine einfache waagerechte Trennlinie -->
+         <Style x:Key="horizontalLine" TargetType="BoxView">
+            <Setter Property="BackgroundColor" Value="DarkGray"/>
+            <Setter Property="HeightRequest" Value="2" />
+            <Setter Property="Margin" Value="3"/>
+         </Style>
+
+      </ResourceDictionary>
+   </Application.Resources>
+</Application>

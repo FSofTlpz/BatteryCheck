@@ -1,0 +1,199 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:local="clr-namespace:BatteryCheck;assembly=BatteryCheck"
+             xmlns:fsoftutil="clr-namespace:FSofTUtils.Xamarin.Control;assembly=BatteryCheck"
+             x:Class="BatteryCheck.MainPage"
+             Title="Batterieüberwachung"
+             BackgroundColor="#d0ffd0">
+   <ContentPage.Resources>
+      <ResourceDictionary>
+         <Style x:Key="BlackLabel" TargetType="Label">
+            <Setter Property="TextColor" Value="Black"/>
+         </Style>
+      </ResourceDictionary>
+   </ContentPage.Resources>
+   
+   <ScrollView Orientation="Vertical">
+      <StackLayout>
+         <StackLayout Orientation="Horizontal">
+            <Button x:Name="startbutton"
+                    Text="Start" 
+                    Clicked="startbutton_Clicked"
+                    BackgroundColor="#80ff80" 
+                    Margin="5"
+                    CornerRadius="5"
+                    IsEnabled="False"
+                    HorizontalOptions="FillAndExpand"/>
+            <Button x:Name="stopbutton" 
+                    Text="Stop" 
+                    Clicked="stopbutton_Clicked"
+                    BackgroundColor="#ff8080"
+                    Margin="5"
+                    CornerRadius="5"
+                    IsEnabled="False"
+                    HorizontalOptions="FillAndExpand"/>
+         </StackLayout>
+
+         <Label Text="Alarm bei Unterschreitung von:" Margin="5" Style="{StaticResource BlackLabel}"/>
+         <Grid>
+            <Grid.ColumnDefinitions>
+               <ColumnDefinition Width="4*" />
+               <ColumnDefinition Width="1*" />
+               <ColumnDefinition Width="2*" />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+               <RowDefinition Height="auto" />
+            </Grid.RowDefinitions>
+
+            <Slider x:Name="sliderMinPercent" 
+                    Grid.Row="0" Grid.Column="0" 
+                    Minimum="0"
+                    Maximum="100"
+                    Value="50"
+                    ValueChanged="sliderMinPercent_ValueChanged"/>
+
+            <Label Grid.Row="0" Grid.Column="1" x:Name="labelMinPercent" Text="0%" VerticalTextAlignment="Center" Style="{StaticResource BlackLabel}"/>
+
+            <Button x:Name="buttonSoundMinAlarm" 
+                    Grid.Row="0" Grid.Column="2" 
+                    Text="Klang" 
+                    Clicked="buttonSoundMinAlarm_Clicked"
+                    Margin="5"
+                    Padding="5"
+                    CornerRadius="5"/>
+         </Grid>
+
+         <Grid Margin="5">
+            <Grid.RowDefinitions>
+               <RowDefinition Height="auto" />
+            </Grid.RowDefinitions>
+
+            <Label Text="Wiederholung des Alarms in" Grid.Row="0" Grid.Column="0" VerticalOptions="Center" Style="{StaticResource BlackLabel}"/>
+
+            <Picker x:Name="pickerMinAlarmPeriod"
+                    Grid.Row="0" Grid.Column="1"
+                    Title="Wiederholung des Alarms in"
+                    HorizontalOptions="StartAndExpand" 
+                    PropertyChanged="pickerMinAlarmPeriod_PropertyChanged">
+               <Picker.ItemsSource>
+                  <x:Array Type="{x:Type x:String}">
+                     <x:String>30 s</x:String>
+                     <x:String>1 min</x:String>
+                     <x:String>2 min</x:String>
+                     <x:String>5 min</x:String>
+                     <x:String>10 min</x:String>
+                     <x:String>15 min</x:String>
+                     <x:String>20 min</x:String>
+                     <x:String>30 min</x:String>
+                     <x:String>45 min</x:String>
+                     <x:String>60 min</x:String>
+                  </x:Array>
+               </Picker.ItemsSource>
+               <!--<Picker.SelectedIndex>2</Picker.SelectedIndex>-->
+            </Picker>
+         </Grid>
+
+         <Label Text="Alarm bei Überschreitung von:" Margin="5" Style="{StaticResource BlackLabel}"/>
+         <Grid>
+            <Grid.ColumnDefinitions>
+               <ColumnDefinition Width="4*" />
+               <ColumnDefinition Width="1*" />
+               <ColumnDefinition Width="2*" />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+               <RowDefinition Height="auto" />
+            </Grid.RowDefinitions>
+
+            <Slider x:Name="sliderMaxPercent" 
+                    Grid.Row="0" Grid.Column="0" 
+                    Minimum="0"
+                    Maximum="100"
+                    Value="50"
+                    ValueChanged="sliderMaxPercent_ValueChanged"/>
+
+            <Label Grid.Row="0" Grid.Column="1" x:Name="labelMaxPercent" Text="100%" VerticalTextAlignment="Center" Style="{StaticResource BlackLabel}"/>
+
+            <Button x:Name="buttonSoundMaxAlarm" 
+                    Grid.Row="0" Grid.Column="2" 
+                    Text="Klang" 
+                    Clicked="buttonSoundMaxAlarm_Clicked"
+                    Margin="5"
+                    Padding="5"
+                    CornerRadius="5"/>
+         </Grid>
+
+         <Grid Margin="5">
+            <Grid.RowDefinitions>
+               <RowDefinition Height="auto" />
+            </Grid.RowDefinitions>
+
+            <Label Text="Wiederholung des Alarms in" Grid.Row="0" Grid.Column="0" VerticalOptions="Center" Style="{StaticResource BlackLabel}"/>
+
+            <Picker x:Name="pickerMaxAlarmPeriod"
+                    Grid.Row="0" Grid.Column="1"
+                    Title="Wiederholung des Alarms in"
+                    HorizontalOptions="StartAndExpand" 
+                    PropertyChanged="pickerMaxAlarmPeriod_PropertyChanged">
+               <Picker.ItemsSource>
+                  <x:Array Type="{x:Type x:String}">
+                     <x:String>10 s</x:String>
+                     <x:String>20 s</x:String>
+                     <x:String>30 s</x:String>
+                     <x:String>40 s</x:String>
+                     <x:String>50 s</x:String>
+                     <x:String>1 min</x:String>
+                     <x:String>2 min</x:String>
+                     <x:String>3 min</x:String>
+                     <x:String>4 min</x:String>
+                     <x:String>5 min</x:String>
+                  </x:Array>
+               </Picker.ItemsSource>
+               <!--<Picker.SelectedIndex>2</Picker.SelectedIndex>-->
+            </Picker>
+
+            <Label Text="Alarm auch bei 100%" Grid.Row="1" Grid.Column="0" VerticalOptions="Center" Style="{StaticResource BlackLabel}"/>
+
+            <CheckBox x:Name="checkbox100PercentAlarm" 
+                      Grid.Row="1" Grid.Column="1"
+                      CheckedChanged="checkbox100PercentAlarm_CheckedChanged"/>
+
+         </Grid>
+
+         <Button x:Name="resetbutton" 
+                 Text="auf Standardwerte zurücksetzen" 
+                 Clicked="resetbutton_Clicked"
+                 Margin="5"
+                 Padding="10"
+                 CornerRadius="5"
+                 IsEnabled="True"
+                 HorizontalOptions="StartAndExpand"/>
+
+         <BoxView Style="{StaticResource horizontalLine}"/>
+
+         <Grid Margin="5">
+            <Grid.ColumnDefinitions>
+               <ColumnDefinition Width="1*" />
+               <ColumnDefinition Width="2*" />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+               <RowDefinition Height="auto" />
+            </Grid.RowDefinitions>
+
+            <Label Grid.Row="0" Grid.Column="0" Text="Energiequelle" Style="{StaticResource BlackLabel}"/>
+            <Label Grid.Row="1" Grid.Column="0" Text="Energiepsarmodus" Style="{StaticResource BlackLabel}"/>
+            <Label Grid.Row="2" Grid.Column="0" Text="Batteriestatus" Style="{StaticResource BlackLabel}"/>
+            <Label Grid.Row="3" Grid.Column="0" Text="Batterieladung" Style="{StaticResource BlackLabel}"/>
+            <Label Grid.Row="4" Grid.Column="0" Text="Zusatzinfo" Style="{StaticResource BlackLabel}"/>
+
+            <Label Grid.Row="0" Grid.Column="1" x:Name="labelPowerSource" Text="" Style="{StaticResource BlackLabel}"/>
+            <Label Grid.Row="1" Grid.Column="1" x:Name="labelEnergySaverStatus" Text="" Style="{StaticResource BlackLabel}"/>
+            <Label Grid.Row="2" Grid.Column="1" x:Name="labelBatteryState" Text="" Style="{StaticResource BlackLabel}"/>
+            <Label Grid.Row="3" Grid.Column="1" x:Name="labelCharge" Text="50%"  FontAttributes="Bold" Style="{StaticResource BlackLabel}"/>
+            <Label Grid.Row="4" Grid.Column="1" x:Name="labelExtendedData" Text="" Style="{StaticResource BlackLabel}"/>
+         </Grid>
+
+      </StackLayout>
+   </ScrollView>
+
+</ContentPage>
