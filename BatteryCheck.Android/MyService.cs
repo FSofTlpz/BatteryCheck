@@ -1,4 +1,5 @@
-﻿using Android.App;
+﻿using System;
+using Android.App;
 using Android.Content;
 using Android.OS;
 
@@ -111,21 +112,34 @@ START_REDELIVER_INTENT  If the system kills the service after onStartCommand() r
 
                bool ischarging = Xamarin.Essentials.Battery.State == Xamarin.Essentials.BatteryState.Charging ||
                                  (ServiceCtrl.AlarmFor100Percent &&        // Alarm auch bei 100% und Verbindung zum Stromnetz o.ä.
-                                  Xamarin.Essentials.Battery.PowerSource != Xamarin.Essentials.BatteryPowerSource.Battery && 
+                                  Xamarin.Essentials.Battery.PowerSource != Xamarin.Essentials.BatteryPowerSource.Battery &&
                                   chargelevel == 1);
                bool needminalarm = !ischarging && chargelevel * 100 <= ServiceCtrl.MinPercent;
                bool needmaxalarm = ischarging && ServiceCtrl.MaxPercent <= chargelevel * 100;
 
                if ((needminalarm && !ischarging) ||
-                   (needmaxalarm && ischarging)) {
+                   (needmaxalarm && ischarging)) {    // Alarm-Timer ist nötig
                   if (!timerIsRunning)
                      timerStopAndRemoveNotifications();
 
-                  if (!timerIsRunning)
+                  if (!timerIsRunning) {
+
                      if (needminalarm)
                         startTimer(ServiceCtrl.MinAlarmPeriod * 1000);
                      else if (needmaxalarm)
                         startTimer(ServiceCtrl.MaxAlarmPeriod * 1000);
+
+                  } else {
+
+                     if (needminalarm &&
+                         actualtimerperiod != ServiceCtrl.MinAlarmPeriod * 1000) {        // Timer neu setzen
+                        startTimer(ServiceCtrl.MinAlarmPeriod * 1000);
+                     } else if (needmaxalarm &&
+                                actualtimerperiod != ServiceCtrl.MaxAlarmPeriod * 1000) { // Timer neu setzen
+                        startTimer(ServiceCtrl.MaxAlarmPeriod * 1000);
+                     }
+
+                  }
 
                } else
                   timerStopAndRemoveNotifications();
@@ -172,12 +186,18 @@ START_REDELIVER_INTENT  If the system kills the service after onStartCommand() r
       }
 
       /// <summary>
+      /// akt. eingestellte Timer-Periode
+      /// </summary>
+      static int actualtimerperiod = 0;
+
+      /// <summary>
       /// der Timer wird gestartet
       /// </summary>
       /// <param name="period">Intervall in ms</param>
       static void startTimer(int period) {
          stopTimer();
          timer = new System.Threading.Timer(onTimerStep, null, 0, period);
+         actualtimerperiod = period;
       }
 
       /// <summary>
@@ -188,6 +208,7 @@ START_REDELIVER_INTENT  If the system kills the service after onStartCommand() r
             timer.Change(System.Threading.Timeout.Infinite, 0);
             timer.Dispose();
             timer = null;
+            actualtimerperiod = 0;
          }
       }
 
@@ -204,16 +225,18 @@ START_REDELIVER_INTENT  If the system kills the service after onStartCommand() r
       static void onTimerStep(object state) {
          if (Xamarin.Essentials.Battery.ChargeLevel * 100 <= ServiceCtrl.MinPercent) {
 
-            NotificationHelper.ShowMinAlarmNotification(string.Format("Minimum {0}% unterschritten: {1}%",
+            NotificationHelper.ShowMinAlarmNotification(string.Format("Minimum {0}% unterschritten: {1}%; Alarm nach jeweils {2}",
                                                                       ServiceCtrl.MinPercent,
-                                                                      Xamarin.Essentials.Battery.ChargeLevel * 100),
+                                                                      Xamarin.Essentials.Battery.ChargeLevel * 100,
+                                                                      alarmTime2Text(ServiceCtrl.MinAlarmPeriod)),
                                                         "Batterieentladung");
 
          } else if (ServiceCtrl.MaxPercent <= Xamarin.Essentials.Battery.ChargeLevel * 100) {
 
-            NotificationHelper.ShowMaxAlarmNotification(string.Format("Maximum {0}% überschritten: {1}%",
+            NotificationHelper.ShowMaxAlarmNotification(string.Format("Maximum {0}% überschritten: {1}%; Alarm nach jeweils {2}",
                                                                       ServiceCtrl.MaxPercent,
-                                                                      Xamarin.Essentials.Battery.ChargeLevel * 100),
+                                                                      Xamarin.Essentials.Battery.ChargeLevel * 100,
+                                                                      alarmTime2Text(ServiceCtrl.MaxAlarmPeriod)),
                                                         "Batterieaufladung");
 
          } else {
@@ -222,6 +245,20 @@ START_REDELIVER_INTENT  If the system kills the service after onStartCommand() r
 
          }
       }
+
+      static string alarmTime2Text(int sec) {
+         if (sec < 60)
+            return sec.ToString() + "s";
+
+         int min = sec / 60;
+         sec %= 60;
+
+         if (sec == 0)
+            return min.ToString() + "min";
+
+         return min.ToString() + ":" + sec.ToString("d2") + "min";
+      }
+
 
    }
 }

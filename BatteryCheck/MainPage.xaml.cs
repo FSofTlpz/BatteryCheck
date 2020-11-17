@@ -17,7 +17,7 @@ namespace BatteryCheck {
 
       public MainPage() {
          InitializeComponent();
-         Title = "Batterieüberwachung, © by FSofT 10/2020";
+         Title = "Batterieüberwachung, © by FSofT 11/2020";
          BackgroundImageSource = ImageSource.FromResource("BatteryCheck.mybackground.jpg");
       }
 
