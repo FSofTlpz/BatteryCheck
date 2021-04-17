@@ -1,0 +1,21 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:local="clr-namespace:FSofTUtils.Xamarin;assembly=BatteryCheck"
+             BackgroundImageSource="mybackground.png"
+             x:Class="BatteryCheck.SoundPickPage"
+             Title="Klangauswahl">
+   <ContentPage.Content>
+      <StackLayout>
+         <local:SoundPicker x:Name="soundPicker" 
+                            BackgroundColor="LightBlue"
+                            ItemColor="LightSkyBlue"
+                            SelectedItemColor="SteelBlue"
+                            GadgetsColor="CornflowerBlue"
+                            FilePickerIsVisible="True"
+                            VolumeSliderIsVisible="False"
+                            CloseEvent="soundPicker_CloseEvent">
+         </local:SoundPicker>
+      </StackLayout>
+   </ContentPage.Content>
+</ContentPage>

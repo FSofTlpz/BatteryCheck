@@ -4,7 +4,7 @@ using Android.App;
 using Android.Content;
 using Android.Media;
 using Android.OS;
-using Android.Support.V4.App;
+using AndroidX.Core.App;
 
 namespace BatteryCheck.Droid {
 
@@ -13,7 +13,7 @@ namespace BatteryCheck.Droid {
    /// </summary>
    class NotificationHelper {
 
-      private static Context context = global::Android.App.Application.Context;
+      private static Context appcontext = global::Android.App.Application.Context;
 
       const string NOTIFICATION_INFO = "Battery";
       const string NOTIFICATION_MINALARM = "MinAlarm";
@@ -113,11 +113,12 @@ namespace BatteryCheck.Droid {
 
             } else if (notificationchannel == NOTIFICATION_MINALARM) {
 
-               notificationChannel.SetSound(Android.Net.Uri.Parse("android.resource://" + context.PackageName + "/" + BatteryCheck.Droid.Resource.Raw.MinAlarm),
-                                            new AudioAttributes.Builder()
-                                                     .SetUsage(AudioUsageKind.Alarm)
-                                                     .SetContentType(AudioContentType.Music)
-                                                     .Build());
+               //notificationChannel.SetSound(Android.Net.Uri.Parse("android.resource://" + context.PackageName + "/" + BatteryCheck.Droid.Resource.Raw.MinAlarm),
+               //                             new AudioAttributes.Builder()
+               //                                      .SetUsage(AudioUsageKind.Alarm)
+               //                                      .SetContentType(AudioContentType.Music)
+               //                                      .Build());
+               notificationChannel.SetSound(null, null);
 
                notificationChannel.EnableVibration(true);
                notificationChannel.ShouldVibrate();
@@ -129,18 +130,15 @@ namespace BatteryCheck.Droid {
 
                notificationChannel.LockscreenVisibility = NotificationVisibility.Public;  // Sets whether notifications posted to this channel appear on the lockscreen or not, and if so, whether they appear in a redacted form. 
 
-
-               notificationChannel.EnableLights(true);         // Sets whether notifications posted to this channel should display notification lights, on devices that support that feature. 
-               notificationChannel.LockscreenVisibility = NotificationVisibility.Public;  // Sets whether notifications posted to this channel appear on the lockscreen or not, and if so, whether they appear in a redacted form. 
-
             } else if (notificationchannel == NOTIFICATION_MAXALARM) {
 
                //RingtoneManager.GetDefaultUri(RingtoneType.Alarm) oder RingtoneManager.GetDefaultUri(RingtoneType.Notification)
-               notificationChannel.SetSound(Android.Net.Uri.Parse("android.resource://" + context.PackageName + "/" + BatteryCheck.Droid.Resource.Raw.MaxAlarm),
-                                            new AudioAttributes.Builder()
-                                                     .SetUsage(AudioUsageKind.Alarm)
-                                                     .SetContentType(AudioContentType.Music)
-                                                     .Build());
+               //notificationChannel.SetSound(Android.Net.Uri.Parse("android.resource://" + context.PackageName + "/" + BatteryCheck.Droid.Resource.Raw.MaxAlarm),
+               //                             new AudioAttributes.Builder()
+               //                                      .SetUsage(AudioUsageKind.Alarm)
+               //                                      .SetContentType(AudioContentType.Music)
+               //                                      .Build());
+               notificationChannel.SetSound(null, null);
 
                notificationChannel.EnableVibration(true);
                notificationChannel.ShouldVibrate();
@@ -179,30 +177,30 @@ namespace BatteryCheck.Droid {
                             .SetContentText(text)
                             .SetContentTitle(title);
 #else
-            var intent = new Intent(context, typeof(MainActivity));
+            var intent = new Intent(appcontext, typeof(MainActivity));
             intent.AddFlags(ActivityFlags.SingleTop);
             intent.PutExtra("Title", "Message");
 
-            var pendingIntent = PendingIntent.GetActivity(context, 0, intent, PendingIntentFlags.UpdateCurrent);
+            var pendingIntent = PendingIntent.GetActivity(appcontext, 0, intent, PendingIntentFlags.UpdateCurrent);
 
             NotificationCompat.Builder builder = null;
             if (notificationchannel == NOTIFICATION_INFO) {
 
-               builder = new NotificationCompat.Builder(context, notificationchannel)
+               builder = new NotificationCompat.Builder(appcontext, notificationchannel)
                                   .SetOngoing(true)                           // true -> kann vom Anwender nicht beseitigt werden
                                   .SetProgress(100, 0, false);                 // Set the progress this notification represents.
                builder.SetSmallIcon(Icon[0]);
 
             } else if (notificationchannel == NOTIFICATION_MINALARM) {
 
-               builder = new NotificationCompat.Builder(context, notificationchannel)
+               builder = new NotificationCompat.Builder(appcontext, notificationchannel)
                                   .SetOnlyAlertOnce(true)
                                   .SetOngoing(false);
                builder.SetSmallIcon(Icon[0]);
 
             } else if (notificationchannel == NOTIFICATION_MAXALARM) {
 
-               builder = new NotificationCompat.Builder(context, notificationchannel)
+               builder = new NotificationCompat.Builder(appcontext, notificationchannel)
                                   //.SetSound(alarmSound)      // This method was deprecated in API level 26 (BuildVersionCodes.O). use NotificationChannel#setSound(Uri, AudioAttributes) instead.
                                   .SetOnlyAlertOnce(true)
                                   .SetOngoing(false);
@@ -253,59 +251,16 @@ namespace BatteryCheck.Droid {
          }
       }
 
-
-      /// <summary>
-      /// beruht auf der Änderung der Kanal-ID's
-      /// </summary>
-      public static void ResetAlarmChannels() {
-         if (notificationManager != null) {
-            string oldbaseid = ServiceCtrl.NotificationChannelBaseID;
-            int id = (oldbaseid == "" ? 1000 : Convert.ToInt32(oldbaseid)) + 1;
-            ServiceCtrl.NotificationChannelBaseID = id.ToString();
-
-            AppNotificationChannel appNotificationChannel = channels[NOTIFICATION_MINALARM];
-            notificationManager.DeleteNotificationChannel(appNotificationChannel.ChannelID);
-            channels[NOTIFICATION_MINALARM] = new AppNotificationChannel(appNotificationChannel.ChannelName, id.ToString() + "MIN", appNotificationChannel.NotificationID);
-            channels[NOTIFICATION_MINALARM].CreateAndRegisterChannel(notificationManager);
-
-            appNotificationChannel = channels[NOTIFICATION_MAXALARM];
-            notificationManager.DeleteNotificationChannel(appNotificationChannel.ChannelID);
-            channels[NOTIFICATION_MAXALARM] = new AppNotificationChannel(appNotificationChannel.ChannelName, id.ToString() + "MAX", appNotificationChannel.NotificationID);
-            channels[NOTIFICATION_MAXALARM].CreateAndRegisterChannel(notificationManager);
-         }
-      }
-
       static void createAndRegisterChannels() {
          if (notificationManager == null) {
-            notificationManager = context.GetSystemService(Context.NotificationService) as NotificationManager;
+            notificationManager = appcontext.GetSystemService(Context.NotificationService) as NotificationManager;
 
             // Building channel if API verion is 26 or above
             if (global::Android.OS.Build.VERSION.SdkInt >= BuildVersionCodes.O)
-               foreach (var item in channels) 
+               foreach (var item in channels)
                   item.Value.CreateAndRegisterChannel(notificationManager);
          }
       }
-
-
-      public static void ChangeMinAlarmChannelUI() {
-         changeChannelUI(NOTIFICATION_MINALARM);
-      }
-
-      public static void ChangeMaxAlarmChannelUI() {
-         changeChannelUI(NOTIFICATION_MAXALARM);
-      }
-
-      static void changeChannelUI(string channelname) {
-         createAndRegisterChannels();
-
-         Intent intent = new Intent(Android.Provider.Settings.ActionChannelNotificationSettings);
-         intent.PutExtra(Android.Provider.Settings.ExtraAppPackage, context.PackageName);
-         intent.PutExtra(Android.Provider.Settings.ExtraChannelId, channels[channelname].ChannelID);
-         if ((Build.VERSION.SdkInt <= BuildVersionCodes.M) || (BuildVersionCodes.P <= Build.VERSION.SdkInt))
-            intent.AddFlags(ActivityFlags.NewTask);
-         context.StartActivity(intent);
-      }
-
 
       /// <summary>
       /// Erzeugung der Info-Notification
@@ -316,26 +271,6 @@ namespace BatteryCheck.Droid {
       public static Notification CreateInfoNotification(string text, string title) {
          return createNotification(NOTIFICATION_INFO, text, title);
       }
-
-      /// <summary>
-      /// Erzeugung der Min-Alarm-Notification
-      /// </summary>
-      /// <param name="text"></param>
-      /// <param name="title"></param>
-      /// <returns></returns>
-      //public static Notification CreateMinAlarmNotification(string text, string title) {
-      //   return createNotification(NOTIFICATION_MINALARM, text, title);
-      //}
-
-      /// <summary>
-      /// Erzeugung der Max-Alarm-Notification
-      /// </summary>
-      /// <param name="text"></param>
-      /// <param name="title"></param>
-      /// <returns></returns>
-      //public static Notification CreateMaxAlarmNotification(string text, string title) {
-      //   return createNotification(NOTIFICATION_MAXALARM, text, title);
-      //}
 
       static Notification createNotification(string channelname, string text, string title) {
          createAndRegisterChannels();
@@ -372,14 +307,13 @@ namespace BatteryCheck.Droid {
          }
       }
 
-
       /// <summary>
       /// Anzeige der Min-Alarm-Notification
       /// </summary>
       /// <param name="text"></param>
       /// <param name="title"></param>
-      public static void ShowMinAlarmNotification(string text, string title = null) {
-         showAlarmNotification(NOTIFICATION_MINALARM, text, title);
+      public static void ShowMinAlarmNotification(string text, string title, string soundurl) {
+         showAlarmNotification(NOTIFICATION_MINALARM, text, title, soundurl);
       }
 
       /// <summary>
@@ -387,17 +321,19 @@ namespace BatteryCheck.Droid {
       /// </summary>
       /// <param name="text"></param>
       /// <param name="title"></param>
-      public static void ShowMaxAlarmNotification(string text, string title = null) {
-         showAlarmNotification(NOTIFICATION_MAXALARM, text, title);
+      public static void ShowMaxAlarmNotification(string text, string title, string soundurl) {
+         showAlarmNotification(NOTIFICATION_MAXALARM, text, title, soundurl);
       }
 
-      static void showAlarmNotification(string channelname, string text, string title = null) {
+      static void showAlarmNotification(string channelname, string text, string title, string soundurl) {
          createAndRegisterChannels();
          notificationManager.Cancel(channels[channelname].NotificationID);
          Notification notification = createNotification(channelname, text, title);
          notificationManager.Notify(channels[channelname].NotificationID, notification);
-      }
 
+         if (!string.IsNullOrEmpty(soundurl))
+            playNotifyRingtone(Android.Net.Uri.Parse(soundurl), 1F);
+      }
 
       /// <summary>
       /// entfernen einer ev. vorhandenen Min-Alarm-Notification
@@ -418,5 +354,41 @@ namespace BatteryCheck.Droid {
          notificationManager.Cancel(channels[channelname].NotificationID);
       }
 
+      #region Sound als Ringtone abspielen
+
+      static Ringtone alarmRingtone = null;
+
+      /// <summary>
+      /// spielt den Ton mit der URI ab
+      /// </summary>
+      /// <param name="uri"></param>
+      /// <param name="volume">0.0 .. 1.0</param>
+      static void playNotifyRingtone(Android.Net.Uri uri, float volume = 1.0F) {
+         stopNotifyRingtone();
+         Ringtone rt = RingtoneManager.GetRingtone(appcontext, uri);
+         if (rt != null) {
+            rt.AudioAttributes = new AudioAttributes.Builder()
+                                     .SetUsage(AudioUsageKind.Alarm)
+                                     .SetContentType(AudioContentType.Music)
+                                     .Build();
+            rt.Looping = false;
+            rt.Volume = volume;
+            rt.Play();
+            alarmRingtone = rt;
+         }
+      }
+
+      static void stopNotifyRingtone() {
+         if (alarmRingtone != null)  {
+            if (alarmRingtone.IsPlaying) 
+               alarmRingtone.Stop();
+            alarmRingtone.Dispose();
+            alarmRingtone = null;
+         }
+      }
+
+      #endregion
+
    }
+
 }

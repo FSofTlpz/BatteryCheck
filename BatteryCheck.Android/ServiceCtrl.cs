@@ -217,6 +217,52 @@ namespace BatteryCheck.Droid {
          AlarmFor100Percent = value;
       }
 
+
+      const string MINALARM = "MinAlarm";
+
+      public static string MinAlarm {
+         get {
+            return GetPrivateData(MINALARM, "");
+         }
+         set {
+            SetPrivateData(MINALARM, value != null ? value.Trim() : "");
+         }
+      }
+
+      public string GetMinAlarm() {
+         return MinAlarm;
+      }
+
+      public void SetMinAlarm(string value) {
+         if (MinAlarm != value) {
+            MinAlarm = value;
+            MyService.OnUpdateData();
+         }
+      }
+
+
+      const string MAXALARM = "MaxAlarm";
+
+      public static string MaxAlarm {
+         get {
+            return GetPrivateData(MAXALARM, "");
+         }
+         set {
+            SetPrivateData(MAXALARM, value != null ? value.Trim() : "");
+         }
+      }
+
+      public string GetMaxAlarm() {
+         return MaxAlarm;
+      }
+
+      public void SetMaxAlarm(string value) {
+         if (MaxAlarm != value) {
+            MaxAlarm = value;
+            MyService.OnUpdateData();
+         }
+      }
+
       #endregion
 
       #region allg. Funktionen zum Speichern/Lesen privater (Android-)Vars
@@ -305,19 +351,6 @@ namespace BatteryCheck.Droid {
       }
 
       #endregion
-
-
-      public void ChangeMinAlarm() {
-         NotificationHelper.ChangeMinAlarmChannelUI();
-      }
-
-      public void ChangeMaxAlarm() {
-         NotificationHelper.ChangeMaxAlarmChannelUI();
-      }
-
-      public void ResetAlamsound() {
-         NotificationHelper.ResetAlarmChannels();
-      }
 
    }
 

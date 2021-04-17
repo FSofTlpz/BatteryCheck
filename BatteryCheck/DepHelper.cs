@@ -81,6 +81,30 @@ namespace BatteryCheck {
          }
       }
 
+      /// <summary>
+      /// URL des MinAlarm
+      /// </summary>
+      public static string MinAlarm {
+         get {
+            return DependencyService.Get<IServiceCtrl>().GetMinAlarm();
+         }
+         set {
+            DependencyService.Get<IServiceCtrl>().SetMinAlarm(value);
+         }
+      }
+
+      /// <summary>
+      /// URL des MaxAlarm
+      /// </summary>
+      public static string MaxAlarm {
+         get {
+            return DependencyService.Get<IServiceCtrl>().GetMaxAlarm();
+         }
+         set {
+            DependencyService.Get<IServiceCtrl>().SetMaxAlarm(value);
+         }
+      }
+
 
       /// <summary>
       /// liefert (unter Android) zusätzliche Daten für die Batterie
@@ -90,18 +114,6 @@ namespace BatteryCheck {
       /// <param name="technology"></param>
       public static void GetAndroidBatteryExtendedData(out int health, out float temperature, out string technology, out long chargetimeremaining) {
          DependencyService.Get<IBatteryInfo>().GetAndroidBatteryExtendedData(out health, out temperature, out technology, out chargetimeremaining);
-      }
-
-      public static void ChangeMinAlarm() {
-         DependencyService.Get<IServiceCtrl>().ChangeMinAlarm();
-      }
-
-      public static void ChangeMaxAlarm() {
-         DependencyService.Get<IServiceCtrl>().ChangeMaxAlarm();
-      }
-
-      public static void ResetAlamsound() {
-         DependencyService.Get<IServiceCtrl>().ResetAlamsound();
       }
 
    }

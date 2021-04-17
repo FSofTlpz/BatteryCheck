@@ -38,12 +38,11 @@
       void SetAlarmFor100Percent(bool value);
 
 
-      void ChangeMinAlarm();
+      string GetMinAlarm();
+      void SetMinAlarm(string url);
 
-      void ChangeMaxAlarm();
-
-
-      void ResetAlamsound();
+      string GetMaxAlarm();
+      void SetMaxAlarm(string url);
 
    }
 }

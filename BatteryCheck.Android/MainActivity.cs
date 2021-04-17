@@ -1,11 +1,9 @@
-﻿using System;
-
+﻿
 using Android.App;
 using Android.Content.PM;
+using Android.OS;
 using Android.Runtime;
 using Android.Views;
-using Android.Widget;
-using Android.OS;
 
 namespace BatteryCheck.Droid {
    [Activity(Label = "BatteryCheck", Icon = "@mipmap/icon", Theme = "@style/MainTheme", MainLauncher = true, ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation | ConfigChanges.UiMode | ConfigChanges.ScreenLayout | ConfigChanges.SmallestScreenSize)]
@@ -18,6 +16,7 @@ namespace BatteryCheck.Droid {
 
          Xamarin.Essentials.Platform.Init(this, savedInstanceState);
          global::Xamarin.Forms.Forms.Init(this, savedInstanceState);
+
          LoadApplication(new App());
       }
 
@@ -35,7 +34,7 @@ namespace BatteryCheck.Droid {
       /// <returns></returns>
       public override bool OnOptionsItemSelected(IMenuItem item) {
          // check if the current item id is equals to the back button id
-         if (item.ItemId == 16908332) {
+         if (item.ItemId == Android.Resource.Id.Home) {  // 16908332
             Xamarin.Forms.Application myapplication = Xamarin.Forms.Application.Current;
             if (myapplication.MainPage.SendBackButtonPressed())
                return false;

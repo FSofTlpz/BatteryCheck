@@ -1,10 +1,17 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
+using System.IO;
+using System.Reflection;
+using System.Threading;
+using System.Threading.Tasks;
 using Xamarin.Essentials;
 using Xamarin.Forms;
 
 namespace BatteryCheck {
    public partial class MainPage : ContentPage {
+
+      const string TITLE = "Batterieüberwachung, © by FSofT 4/2021";
 
       const string FIRSTSTARTKEY = "FirstStart";
 
@@ -14,15 +21,24 @@ namespace BatteryCheck {
       const int STDMAXALARMPERIOD = 30;
       const bool STDALARMON100Percent = true;
 
+      List<string> internalAudiofiles = new List<string>();
+
+      ManualResetEvent mreWait4LoadInternalAudiofiles = new ManualResetEvent(false);
+
+      string soundMaxAlarm = "";
+      string soundMinAlarm = "";
+
 
       public MainPage() {
          InitializeComponent();
-         Title = "Batterieüberwachung, © by FSofT 11/2020";
          BackgroundImageSource = ImageSource.FromResource("BatteryCheck.mybackground.jpg");
+         UnpackAndRegisterMusic().Start();
       }
 
       protected override void OnAppearing() {
          base.OnAppearing();
+
+         Title = TITLE + " (v" + Xamarin.Essentials.AppInfo.VersionString + ")";
 
          startbutton.IsEnabled = !DepHelper.ServiceIsActive;
          stopbutton.IsEnabled = !startbutton.IsEnabled;
@@ -51,6 +67,10 @@ namespace BatteryCheck {
          pickerMaxAlarmPeriod.SelectedIndex = getBestIdx4Period(pickerMaxAlarmPeriod, DepHelper.MaxAlarmPeriod);
 
          checkbox100PercentAlarm.IsChecked = DepHelper.AlarmOn100Percent;
+
+         soundMinAlarm = DepHelper.MinAlarm;
+         soundMaxAlarm = DepHelper.MaxAlarm;
+
       }
 
       protected override void OnDisappearing() {
@@ -58,6 +78,62 @@ namespace BatteryCheck {
          Battery.EnergySaverStatusChanged -= battery_EnergySaverStatusChanged;
 
          base.OnDisappearing();
+      }
+
+      /// <summary>
+      /// speichert die als Resourcen gelieferten mp3-Dateien im internen (App-privaten) Speicher
+      /// </summary>
+      Task UnpackAndRegisterMusic() {
+         Task t = new Task(() => {
+            string basepath = System.Environment.GetFolderPath(System.Environment.SpecialFolder.MyMusic); // intern, z.B.: "/data/user/0/com.fsoft.simpletimer/files/Music"
+
+            if (!Directory.Exists(basepath))
+               Directory.CreateDirectory(basepath);
+
+            Assembly ass = GetType().Assembly;
+
+            SortedDictionary<string, string> audiofilenames = new SortedDictionary<string, string>();
+            foreach (string resname in ass.GetManifestResourceNames()) {
+               string ext = resname.Substring(resname.LastIndexOf('.') + 1);
+               if (ext.ToLower() == "mp3") {
+                  int start = -1;
+                  for (int i = resname.Length - 5; i >= 0; i--) {
+                     if (resname[i] == '.') {
+                        start = i + 1;
+                        break;
+                     }
+                  }
+                  if (start >= 0)
+                     audiofilenames.Add(resname, resname.Substring(start));
+               }
+            }
+
+            foreach (var item in audiofilenames) {
+               string filename = item.Value;
+               string title = filename.Substring(0, filename.LastIndexOf('.')); // fkt. unter Android 10 wahrscheinlich nicht -> Dateiname verwenden
+               string srcfilename = Path.Combine(basepath, filename);
+
+               if (!File.Exists(srcfilename)) {
+                  using (Stream stream = ass.GetManifestResourceStream(item.Key)) {
+                     using (FileStream fs = new FileStream(srcfilename, FileMode.Create)) {
+                        stream.CopyTo(fs);
+                     }
+                  }
+               }
+               internalAudiofiles.Add(srcfilename);
+            }
+
+            if (DepHelper.MinAlarm == "" && internalAudiofiles.Count >= 2)
+               soundMinAlarm = DepHelper.MinAlarm = internalAudiofiles[1];
+
+            if (DepHelper.MaxAlarm == "" && internalAudiofiles.Count >= 1)
+               soundMaxAlarm = DepHelper.MaxAlarm = internalAudiofiles[0];
+
+            mreWait4LoadInternalAudiofiles.Set();
+
+         });
+
+         return t;
       }
 
       void showActualBatteryState(double chargeLevel,
@@ -238,12 +314,49 @@ namespace BatteryCheck {
          DepHelper.AlarmOn100Percent = checkbox100PercentAlarm.IsChecked;
       }
 
-      private void buttonSoundMinAlarm_Clicked(object sender, EventArgs e) {
-         DepHelper.ChangeMinAlarm();
+      async private void buttonSoundMinAlarm_Clicked(object sender, EventArgs e) {
+         soundChoose = SoundChoose.MinAlarm;
+         chooseSound(soundMinAlarm);
       }
 
-      private void buttonSoundMaxAlarm_Clicked(object sender, EventArgs e) {
-         DepHelper.ChangeMaxAlarm();
+      async private void buttonSoundMaxAlarm_Clicked(object sender, EventArgs e) {
+         soundChoose = SoundChoose.MaxAlarm;
+         chooseSound(soundMaxAlarm);
+      }
+
+
+      enum SoundChoose {
+         unknown,
+         MinAlarm,
+         MaxAlarm,
+      }
+
+
+      SoundChoose soundChoose = SoundChoose.unknown;
+
+      async void chooseSound(string orgsound) {
+         mreWait4LoadInternalAudiofiles.WaitOne();
+
+         SoundPickPage soundPickPage = new SoundPickPage();
+         soundPickPage.AddAdditionalAudiofiles(internalAudiofiles);
+         soundPickPage.InitSound(orgsound);
+         soundPickPage.CloseEvent += SoundPickPage_CloseEvent;
+
+         await Navigation.PushAsync(soundPickPage);
+      }
+
+      private void SoundPickPage_CloseEvent(object sender, SoundPickPage.CloseEventArgs e) {
+         if (e.NativeSoundData != null) {
+            switch (soundChoose) {
+               case SoundChoose.MinAlarm:
+                  DepHelper.MinAlarm = soundMinAlarm = e.NativeSoundData.Data;
+                  break;
+
+               case SoundChoose.MaxAlarm:
+                  DepHelper.MaxAlarm = soundMaxAlarm = e.NativeSoundData.Data;
+                  break;
+            }
+         }
       }
 
       private void resetbutton_Clicked(object sender, EventArgs e) {
@@ -251,7 +364,9 @@ namespace BatteryCheck {
          sliderMaxPercent.Value = STDMAXPERCENT;
          pickerMinAlarmPeriod.SelectedIndex = getBestIdx4Period(pickerMinAlarmPeriod, STDMINALARMPERIOD);
          pickerMaxAlarmPeriod.SelectedIndex = getBestIdx4Period(pickerMaxAlarmPeriod, STDMAXALARMPERIOD);
-         DepHelper.ResetAlamsound();
+
+         soundMinAlarm = DepHelper.MinAlarm = internalAudiofiles[1];
+         soundMaxAlarm = DepHelper.MaxAlarm = internalAudiofiles[0];
       }
 
       /// <summary>

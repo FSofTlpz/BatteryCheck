@@ -229,7 +229,8 @@ START_REDELIVER_INTENT  If the system kills the service after onStartCommand() r
                                                                       ServiceCtrl.MinPercent,
                                                                       Xamarin.Essentials.Battery.ChargeLevel * 100,
                                                                       alarmTime2Text(ServiceCtrl.MinAlarmPeriod)),
-                                                        "Batterieentladung");
+                                                        "Batterieentladung",
+                                                        ServiceCtrl.MinAlarm);
 
          } else if (ServiceCtrl.MaxPercent <= Xamarin.Essentials.Battery.ChargeLevel * 100) {
 
@@ -237,7 +238,8 @@ START_REDELIVER_INTENT  If the system kills the service after onStartCommand() r
                                                                       ServiceCtrl.MaxPercent,
                                                                       Xamarin.Essentials.Battery.ChargeLevel * 100,
                                                                       alarmTime2Text(ServiceCtrl.MaxAlarmPeriod)),
-                                                        "Batterieaufladung");
+                                                        "Batterieaufladung",
+                                                        ServiceCtrl.MaxAlarm);
 
          } else {
 
