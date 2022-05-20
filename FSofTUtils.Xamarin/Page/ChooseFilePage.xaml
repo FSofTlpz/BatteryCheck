@@ -1,0 +1,21 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:fuxctrl="clr-namespace:FSofTUtils.Xamarin.Control;assembly=FSofTUtils.Xamarin"
+             x:Class="FSofTUtils.Xamarin.Page.ChooseFilePage">
+   <ContentPage.Content>
+      <StackLayout>
+         <fuxctrl:ChooseFile x:Name="chooseFile"
+                             ChooseFileReadyEvent="ctrl_ChooseFileReadyEvent"
+                             BackgroundColor="White"
+                             ListViewItemColor="AliceBlue"
+                             ColorMainText="Black"
+                             BackcolorMainText="LightBlue"
+                             ColorInfoText="DarkGray"
+                             BackcolorInfoText="White"
+                             ListViewSeparatorColor="Black"
+                             SelectedListViewItemColor="LightSteelBlue"/>
+
+      </StackLayout>
+   </ContentPage.Content>
+</ContentPage>

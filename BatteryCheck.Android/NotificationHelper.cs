@@ -312,8 +312,8 @@ namespace BatteryCheck.Droid {
       /// </summary>
       /// <param name="text"></param>
       /// <param name="title"></param>
-      public static void ShowMinAlarmNotification(string text, string title, string soundurl) {
-         showAlarmNotification(NOTIFICATION_MINALARM, text, title, soundurl);
+      public static void ShowMinAlarmNotification(string text, string title, string soundurl, float volume) {
+         showAlarmNotification(NOTIFICATION_MINALARM, text, title, soundurl, volume);
       }
 
       /// <summary>
@@ -321,18 +321,18 @@ namespace BatteryCheck.Droid {
       /// </summary>
       /// <param name="text"></param>
       /// <param name="title"></param>
-      public static void ShowMaxAlarmNotification(string text, string title, string soundurl) {
-         showAlarmNotification(NOTIFICATION_MAXALARM, text, title, soundurl);
+      public static void ShowMaxAlarmNotification(string text, string title, string soundurl, float volume) {
+         showAlarmNotification(NOTIFICATION_MAXALARM, text, title, soundurl, volume);
       }
 
-      static void showAlarmNotification(string channelname, string text, string title, string soundurl) {
+      static void showAlarmNotification(string channelname, string text, string title, string soundurl, float volume) {
          createAndRegisterChannels();
          notificationManager.Cancel(channels[channelname].NotificationID);
          Notification notification = createNotification(channelname, text, title);
          notificationManager.Notify(channels[channelname].NotificationID, notification);
 
          if (!string.IsNullOrEmpty(soundurl))
-            playNotifyRingtone(Android.Net.Uri.Parse(soundurl), 1F);
+            playNotifyRingtone(Android.Net.Uri.Parse(soundurl), volume);
       }
 
       /// <summary>
@@ -379,8 +379,8 @@ namespace BatteryCheck.Droid {
       }
 
       static void stopNotifyRingtone() {
-         if (alarmRingtone != null)  {
-            if (alarmRingtone.IsPlaying) 
+         if (alarmRingtone != null) {
+            if (alarmRingtone.IsPlaying)
                alarmRingtone.Stop();
             alarmRingtone.Dispose();
             alarmRingtone = null;

@@ -1,0 +1,118 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<ContentView xmlns="http://xamarin.com/schemas/2014/forms" 
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="FSofTUtils.Xamarin.Control.SoundPicker"
+             x:Name="this">
+   <ContentView.Content>
+      <StackLayout x:Name="mainStackLayout">
+         <StackLayout VerticalOptions="FillAndExpand">
+
+            <CollectionView x:Name="myCollectionView" 
+                            Margin="5"
+                            SelectionMode="Single"
+                            SelectionChanged="myCollectionView_SelectionChanged"
+                            ItemsSource="{Binding SoundDataList}">
+               <CollectionView.ItemsLayout>
+                  <LinearItemsLayout Orientation="Vertical"
+                                     ItemSpacing="5"/>
+               </CollectionView.ItemsLayout>
+
+               <CollectionView.ItemTemplate>
+                  <DataTemplate>
+                     <Frame BackgroundColor="{Binding Source={x:Reference this}, Path=ItemColor}"
+                            CornerRadius="10"
+                            Padding="5"
+                            Margin="5">
+                        <VisualStateManager.VisualStateGroups>
+                           <VisualStateGroup Name="CommonStates">
+                              <VisualState Name="Normal" />
+                              <VisualState Name="Selected">
+                                 <VisualState.Setters>
+                                    <Setter Property="BackgroundColor" Value="{Binding Source={x:Reference this}, Path=SelectedItemColor}" />
+                                 </VisualState.Setters>
+                              </VisualState>
+                           </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
+
+                        <StackLayout Orientation="Horizontal"
+                                     HorizontalOptions="CenterAndExpand"
+                                     VerticalOptions="Center">
+                           <CheckBox Color="Black"
+                                     VerticalOptions="Center"
+                                     IsChecked="{Binding Active}"/>
+                           <Label Text="{Binding Title}"
+                                  TextColor="Black"
+                                  FontSize="Medium"
+                                  LineBreakMode="NoWrap"
+                                  VerticalOptions="Center"/>
+                        </StackLayout>
+                     </Frame>
+                  </DataTemplate>
+               </CollectionView.ItemTemplate>
+            </CollectionView>
+
+            <Frame x:Name="frameAppendFile" 
+                   IsVisible="{Binding Source={x:Reference this}, Path=FilePickerIsVisible}"
+                   CornerRadius="10"
+                   HasShadow="True"
+                   Margin="5"
+                   BackgroundColor="{Binding Source={x:Reference this}, Path=GadgetsColor}"
+                   VerticalOptions="CenterAndExpand">
+               <Label Text="Datei anfügen"
+                      TextColor="Black"
+                      FontSize="Medium"
+                      HorizontalOptions="Center"/>
+               <Frame.GestureRecognizers>
+                  <TapGestureRecognizer Tapped="appendFile_Tapped"/>
+               </Frame.GestureRecognizers>
+            </Frame>
+
+            <Frame x:Name="frameVolume" 
+                   IsVisible="{Binding Source={x:Reference this}, Path=VolumeSliderIsVisible}"
+                   CornerRadius="10"
+                   HasShadow="True"
+                   Margin="5"
+                   BackgroundColor="{Binding Source={x:Reference this}, Path=GadgetsColor}"
+                   VerticalOptions="CenterAndExpand">
+               <StackLayout Orientation="Vertical">
+                  <Label Text="Lautstärke"
+                         TextColor="Black"
+                         FontSize="Small"
+                         HorizontalOptions="Center"/>
+                  <Slider x:Name="sliderVolume"
+                          Minimum="0"
+                          Maximum="1"
+                          FlowDirection="LeftToRight"
+                          Margin="10"
+                          ThumbColor="DarkSlateBlue"
+                          MinimumTrackColor="White"
+                          ValueChanged="sliderVolume_ValueChanged"/>
+               </StackLayout>
+            </Frame>
+         </StackLayout>
+
+         <Grid Margin="10">
+            <Grid.ColumnDefinitions>
+               <ColumnDefinition Width="1*" />
+               <ColumnDefinition Width="1*" />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+               <RowDefinition Height="auto" />
+            </Grid.RowDefinitions>
+
+            <Label Grid.Row="0" Grid.Column="0" Text="abbrechen" TextColor="Red" FontSize="Medium" HorizontalOptions="Center" VerticalOptions="Center">
+               <Label.GestureRecognizers>
+                  <TapGestureRecognizer Tapped="cancel_Tapped"/>
+               </Label.GestureRecognizers>
+            </Label>
+            <Label Grid.Row="0" Grid.Column="1" Text="OK" TextColor="DarkGreen" FontSize="Medium" HorizontalOptions="Center" VerticalOptions="Center" >
+               <Label.GestureRecognizers>
+                  <TapGestureRecognizer Tapped="ok_Tapped"/>
+               </Label.GestureRecognizers>
+            </Label>
+
+         </Grid>
+
+      </StackLayout>
+   </ContentView.Content>
+</ContentView>

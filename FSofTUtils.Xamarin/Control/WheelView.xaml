@@ -1,0 +1,80 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<ContentView xmlns="http://xamarin.com/schemas/2014/forms" 
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="FSofTUtils.Xamarin.Control.WheelView"
+             x:Name="this">
+   <ContentView.Content>
+
+      <CarouselView x:Name="Wheel"
+                    Margin="0"
+                    HorizontalOptions="Start"
+                    IsScrollAnimated="True"
+                    Loop="True"
+                    PeekAreaInsets="{Binding PeekAreaInsets, Source={x:Reference this}}">
+         <CarouselView.ItemsLayout>
+            <LinearItemsLayout Orientation="Vertical"
+                               SnapPointsType="Mandatory"
+                               SnapPointsAlignment="Center"
+                               ItemSpacing="0"/>
+         </CarouselView.ItemsLayout>
+
+         <CarouselView.ItemTemplate>
+            <DataTemplate>
+               <StackLayout>
+                  <VisualStateManager.VisualStateGroups>
+                     <VisualStateGroup x:Name="CommonStates">
+                        <VisualState x:Name="DefaultItem">
+                           <VisualState.Setters>
+                              <Setter Property="Opacity" Value="0.25" />
+                           </VisualState.Setters>
+                        </VisualState>
+                        <VisualState x:Name="PreviousItem">
+                           <VisualState.Setters>
+                              <Setter Property="Opacity" Value="0.5" />
+                           </VisualState.Setters>
+                        </VisualState>
+                        <VisualState x:Name="NextItem">
+                           <VisualState.Setters>
+                              <Setter Property="Opacity" Value="0.5" />
+                           </VisualState.Setters>
+                        </VisualState>
+                        <VisualState x:Name="CurrentItem">
+                           <VisualState.Setters>
+                              <Setter Property="Opacity" Value="1.0" />
+                           </VisualState.Setters>
+                        </VisualState>
+                     </VisualStateGroup>
+                  </VisualStateManager.VisualStateGroups>
+
+                  <Frame BackgroundColor="{Binding ItemColor, Source={x:Reference this}}"
+                         BorderColor="DarkGray"
+                         HasShadow="True"
+                         CornerRadius="5"
+                         Margin="0"
+                         Padding="0"
+                         HorizontalOptions="FillAndExpand"
+                         VerticalOptions="Start"
+                         SizeChanged="ItemFrame_SizeChanged">
+                     <Frame.Background>
+                        <LinearGradientBrush EndPoint="0,1">
+                           <GradientStop Color="#30A0FF" Offset="0.0" />
+                           <GradientStop Color="#A0E0FF" Offset="0.5" />
+                           <GradientStop Color="#30A0FF" Offset="1.0" />
+                        </LinearGradientBrush>
+                     </Frame.Background>
+                     <Label Text="{Binding ., StringFormat='{0:D2}'}" 
+                            TextColor="Black"
+                            Margin="0"
+                            Padding="0"
+                            FontSize="{Binding ItemFontSize, Source={x:Reference this}}"
+                            HorizontalOptions="Center"
+                            VerticalOptions="Center"/>
+                  </Frame>
+               </StackLayout>
+            </DataTemplate>
+         </CarouselView.ItemTemplate>
+
+      </CarouselView>
+
+   </ContentView.Content>
+</ContentView>

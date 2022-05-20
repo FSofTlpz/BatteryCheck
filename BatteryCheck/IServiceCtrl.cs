@@ -44,5 +44,11 @@
       string GetMaxAlarm();
       void SetMaxAlarm(string url);
 
+      double GetMinAlarmVolume();
+      void SetMinAlarmVolume(double vol);
+
+      double GetMaxAlarmVolume();
+      void SetMaxAlarmVolume(double vol);
+
    }
 }

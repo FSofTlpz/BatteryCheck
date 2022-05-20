@@ -1,0 +1,41 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <DebugType>portable</DebugType>
+    <RootNamespace>FSofTUtils.Xamarin</RootNamespace>
+    <AssemblyName>FSofTUtils.Xamarin</AssemblyName>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DebugSymbols>true</DebugSymbols>
+    <NoWarn>1701;1702;IDE1006</NoWarn>
+    <DefineConstants>TRACE</DefineConstants>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="ItemTemplateInfo.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="Resource\CollpsedGlyph.png" />
+    <None Remove="Resource\File.png" />
+    <None Remove="Resource\Folder.png" />
+    <None Remove="Resource\Item.png" />
+    <None Remove="Resource\OpenGlyph.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Resource\CollpsedGlyph.png" />
+    <EmbeddedResource Include="Resource\File.png" />
+    <EmbeddedResource Include="Resource\Folder.png" />
+    <EmbeddedResource Include="Resource\Item.png" />
+    <EmbeddedResource Include="Resource\OpenGlyph.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Xamarin.Essentials" Version="1.7.2" />
+    <PackageReference Include="Xamarin.Forms" Version="5.0.0.2401" />
+  </ItemGroup>
+
+</Project>

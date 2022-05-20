@@ -1,0 +1,15 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<ContentView xmlns="http://xamarin.com/schemas/2014/forms" 
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="FSofTUtils.Xamarin.Control.ChooseColor"
+             x:Name="this">
+   <ContentView.Content>
+      <StackLayout Orientation="Vertical"
+                   Margin="{Binding BorderSize, Source={x:Reference this}}">
+         <Slider x:Name="sliderR" Minimum="0" Maximum="1" Value="{Binding ColorComponentR, Source={x:Reference this}, Mode=TwoWay}" Margin="{Binding SliderMargin, Source={x:Reference this}}" BackgroundColor="Red"/>
+         <Slider x:Name="sliderG" Minimum="0" Maximum="1" Value="{Binding ColorComponentG, Source={x:Reference this}, Mode=TwoWay}" Margin="{Binding SliderMargin, Source={x:Reference this}}" BackgroundColor="Green"/>
+         <Slider x:Name="sliderB" Minimum="0" Maximum="1" Value="{Binding ColorComponentB, Source={x:Reference this}, Mode=TwoWay}" Margin="{Binding SliderMargin, Source={x:Reference this}}" BackgroundColor="Blue"/>
+         <Slider x:Name="sliderA" Minimum="0" Maximum="1" Value="{Binding ColorComponentA, Source={x:Reference this}, Mode=TwoWay}" Margin="{Binding SliderMargin, Source={x:Reference this}}" BackgroundColor="LightGray"/>
+      </StackLayout>
+   </ContentView.Content>
+</ContentView>

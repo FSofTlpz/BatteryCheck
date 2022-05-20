@@ -72,9 +72,7 @@ namespace BatteryCheck.Droid {
       const string MINPERCENT = "MinPercent";
 
       public static int MinPercent {
-         get {
-            return GetPrivateData(MINPERCENT, 0);
-         }
+         get => GetPrivateData(MINPERCENT, 0);
          set {
             if (value < 0)
                value = 0;
@@ -99,9 +97,7 @@ namespace BatteryCheck.Droid {
       const string MAXPERCENT = "MaxPercent";
 
       public static int MaxPercent {
-         get {
-            return GetPrivateData(MAXPERCENT, 100);
-         }
+         get => GetPrivateData(MAXPERCENT, 100);
          set {
             if (value > 100)
                value = 100;
@@ -129,9 +125,7 @@ namespace BatteryCheck.Droid {
       /// setzt und liefert die Zeit zwischen 2 Alarmen bei Unterschreitung des Minimalwertes (10s .. 1h, Standard 60s)
       /// </summary>
       public static int MinAlarmPeriod {
-         get {
-            return GetPrivateData(MINTIMERPERIOD, 60);
-         }
+         get => GetPrivateData(MINTIMERPERIOD, 60);
          set {
             if (value > 3600)
                value = 3600;
@@ -163,9 +157,7 @@ namespace BatteryCheck.Droid {
       /// setzt und liefert die Zeit zwischen 2 Alarmen bei Überschreitung des Maximalwertes (5s .. 5min, Standard 30s)
       /// </summary>
       public static int MaxAlarmPeriod {
-         get {
-            return GetPrivateData(MAXTIMERPERIOD, 30);
-         }
+         get => GetPrivateData(MAXTIMERPERIOD, 30);
          set {
             if (value > 300)
                value = 300;
@@ -190,23 +182,16 @@ namespace BatteryCheck.Droid {
       const string NOTIFICATIONCHANNELBASEID = "NotificationChannelBaseID";
 
       public static string NotificationChannelBaseID {
-         get {
-            return GetPrivateData(NOTIFICATIONCHANNELBASEID, "");
-         }
-         set {
-            SetPrivateData(NOTIFICATIONCHANNELBASEID, value);
-         }
+         get => GetPrivateData(NOTIFICATIONCHANNELBASEID, "");
+         set => SetPrivateData(NOTIFICATIONCHANNELBASEID, value);
       }
+
 
       const string ALARM100PERCENT = "Alarm100Percent";
 
       public static bool AlarmFor100Percent {
-         get {
-            return GetPrivateData(ALARM100PERCENT, true);
-         }
-         set {
-            SetPrivateData(ALARM100PERCENT, value);
-         }
+         get => GetPrivateData(ALARM100PERCENT, true);
+         set => SetPrivateData(ALARM100PERCENT, value);
       }
 
       public bool GetAlarmFor100Percent() {
@@ -221,12 +206,8 @@ namespace BatteryCheck.Droid {
       const string MINALARM = "MinAlarm";
 
       public static string MinAlarm {
-         get {
-            return GetPrivateData(MINALARM, "");
-         }
-         set {
-            SetPrivateData(MINALARM, value != null ? value.Trim() : "");
-         }
+         get => GetPrivateData(MINALARM, "");
+         set => SetPrivateData(MINALARM, value != null ? value.Trim() : "");
       }
 
       public string GetMinAlarm() {
@@ -244,12 +225,8 @@ namespace BatteryCheck.Droid {
       const string MAXALARM = "MaxAlarm";
 
       public static string MaxAlarm {
-         get {
-            return GetPrivateData(MAXALARM, "");
-         }
-         set {
-            SetPrivateData(MAXALARM, value != null ? value.Trim() : "");
-         }
+         get => GetPrivateData(MAXALARM, "");
+         set => SetPrivateData(MAXALARM, value != null ? value.Trim() : "");
       }
 
       public string GetMaxAlarm() {
@@ -261,6 +238,38 @@ namespace BatteryCheck.Droid {
             MaxAlarm = value;
             MyService.OnUpdateData();
          }
+      }
+
+
+      const string MINALARMVOLUME = "MinAlarmVolume";
+
+      public static double MinAlarmVolume {
+         get => GetPrivateData(MINALARMVOLUME, 1F);
+         set => SetPrivateData(MINALARMVOLUME, (float)value);
+      }
+
+      public double GetMinAlarmVolume() {
+         return MinAlarmVolume;
+      }
+
+      public void SetMinAlarmVolume(double vol) {
+         MinAlarmVolume = vol;
+      }
+
+
+      const string MAXALARMVOLUME = "MaxAlarmVolume";
+
+      public static double MaxAlarmVolume {
+         get => GetPrivateData(MAXALARMVOLUME, 1F);
+         set => SetPrivateData(MAXALARMVOLUME, (float)value);
+      }
+
+      public double GetMaxAlarmVolume() {
+         return MaxAlarmVolume;
+      }
+
+      public void SetMaxAlarmVolume(double vol) {
+         MaxAlarmVolume = vol;
       }
 
       #endregion

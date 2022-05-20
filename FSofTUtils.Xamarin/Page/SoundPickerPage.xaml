@@ -1,0 +1,20 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:fux="clr-namespace:FSofTUtils.Xamarin.Control;assembly=FSofTUtils.Xamarin"
+             x:Class="FSofTUtils.Xamarin.Page.SoundPickerPage">
+   <ContentPage.Content>
+      <StackLayout>
+
+         <fux:SoundPicker x:Name="soundPicker" 
+                          BackgroundColor="LightBlue"
+                          ItemColor="LightSkyBlue"
+                          SelectedItemColor="SteelBlue"
+                          GadgetsColor="CornflowerBlue"
+                          FilePickerIsVisible="True"
+                          VolumeSliderIsVisible="True"
+                          CloseEvent="soundPicker_CloseEvent"/>
+
+      </StackLayout>
+   </ContentPage.Content>
+</ContentPage>

@@ -1,0 +1,101 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<ContentView xmlns="http://xamarin.com/schemas/2014/forms" 
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:ctrl="clr-namespace:FSofTUtils.Xamarin.Control"
+             x:Class="FSofTUtils.Xamarin.Control.ChooseFile"
+             x:Name="this"
+             BackgroundColor="White">
+   <ContentView.Resources>
+      <ResourceDictionary>
+         <ctrl:ChooseFileBool2ImageConverter x:Key="bool2img" />
+      </ResourceDictionary>
+   </ContentView.Resources>
+
+   <ContentView.Content>
+      <StackLayout Orientation="Vertical">
+
+         <ScrollView Orientation="Horizontal" Margin="5">
+            <Label x:Name="labelPath" 
+                   Text="" 
+                   VerticalOptions="Center" 
+                   LineBreakMode="NoWrap" 
+                   BackgroundColor="{Binding Source={x:Reference this}}"
+                   FontSize="Medium"/>
+         </ScrollView>
+
+         <StackLayout x:Name="entryDestinationStack" 
+                      Orientation="Horizontal" 
+                      Margin="5">
+            <Entry x:Name="entryDestinationfile"
+                   Placeholder="Dateiname"
+                   Text=""
+                   IsSpellCheckEnabled="false"
+                   IsTextPredictionEnabled="false"
+                   Keyboard="Plain"
+                   ReturnType="Done"
+                   HorizontalOptions="FillAndExpand"
+                   Completed="entryDestinationfile_Completed"
+                   TextChanged="entryDestinationfile_TextChanged"/>
+            <Button x:Name="buttonOK" 
+                    Text="OK" 
+                    IsEnabled="False"
+                    Clicked="buttonOK_Clicked"
+                    WidthRequest="50"/>
+         </StackLayout>
+
+         <ListView x:Name="listViewDir"
+                   HorizontalOptions="FillAndExpand"
+                   Margin="5"
+                   SeparatorVisibility="Default" 
+                   SelectionMode="Single"
+                   HasUnevenRows="True" 
+                   SeparatorColor="{Binding ListViewSeparatorColor, Source={x:Reference this}}"
+                   ItemTapped="listViewDir_ItemTapped"  
+                   ItemSelected="listViewDir_ItemSelected">
+            <ListView.ItemTemplate>
+               <DataTemplate>
+                  <ViewCell Tapped="viewCell_Tapped">
+                     <StackLayout Orientation="Horizontal"
+                                  Padding="3,5,3,5"
+                                  VerticalOptions="StartAndExpand"
+                                  HorizontalOptions="FillAndExpand"
+                                  BackgroundColor="{Binding ListViewItemColor, Source={x:Reference this}}">
+                        <Image x:Name="image"
+                               Source="{Binding IsDirectory, Converter={StaticResource bool2img}, ConverterParameter={x:Reference this}}"
+                               HorizontalOptions="Start"
+                               VerticalOptions="Center"
+                               WidthRequest="{Binding FontSize, Source={x:Reference this}}"
+                               HeightRequest="{Binding FontSize, Source={x:Reference this}}"
+                               Margin="5,0,5,0"/>
+                        <StackLayout Orientation="Vertical"
+                                     VerticalOptions="CenterAndExpand"
+                                     HorizontalOptions="FillAndExpand"
+                                     Spacing="0">
+
+                           <Label Text="{Binding Name}"
+                                  HorizontalOptions="FillAndExpand"
+                                  VerticalOptions="CenterAndExpand"
+                                  Padding="5,0,5,0"
+                                  FontSize="{Binding FontSize, Source={x:Reference this}}"
+                                  TextColor="{Binding ColorMainText, Source={x:Reference this}}"
+                                  BackgroundColor="{Binding BackcolorMainText, Source={x:Reference this}}"
+                                  LineBreakMode="CharacterWrap"/>
+
+                           <Label Text="{Binding InfoText}"
+                                  HorizontalOptions="FillAndExpand"
+                                  VerticalOptions="CenterAndExpand"
+                                  Padding="5,0,5,0"
+                                  FontSize="{Binding InfoFontSize, Source={x:Reference this}}"
+                                  TextColor="{Binding ColorInfoText, Source={x:Reference this}}"
+                                  BackgroundColor="{Binding BackcolorInfoText, Source={x:Reference this}}"
+                                  LineBreakMode="CharacterWrap"/>
+                        </StackLayout>
+                     </StackLayout>
+                  </ViewCell>
+               </DataTemplate>
+            </ListView.ItemTemplate>
+         </ListView>
+
+      </StackLayout>
+   </ContentView.Content>
+</ContentView>

@@ -1,0 +1,48 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<ContentView xmlns="http://xamarin.com/schemas/2014/forms" 
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:ctrl="clr-namespace:FSofTUtils.Xamarin.Control"
+             x:Class="FSofTUtils.Xamarin.Control.TimeWheelView"
+             x:Name="this">
+   <ContentView.Resources>
+      <ResourceDictionary>
+         <Style x:Key="templateWheelView" TargetType="ctrl:WheelView">
+            <Setter Property="BackColor" Value="{Binding BackColor, Source={x:Reference this}}"/>
+            <Setter Property="ItemColor" Value="{Binding ItemColor, Source={x:Reference this}}"/>
+            <Setter Property="ItemFontSize" Value="{Binding ItemFontSize, Source={x:Reference this}}"/>
+            <Setter Property="GapSize" Value="4"/>
+            <Setter Property="HorizontalOptions" Value="Start"/>
+            <Setter Property="VerticalOptions" Value="Start"/>
+         </Style>
+
+      </ResourceDictionary>
+   </ContentView.Resources>
+
+   <ContentView.Content>
+      <StackLayout x:Name="mainStackLayout"
+                   HeightRequest="{Binding ControlHeight, Source={x:Reference this}}"
+                   WidthRequest="{Binding ControlWidth, Source={x:Reference this}}"
+                   Orientation="Horizontal"
+                   HorizontalOptions="Start"
+                   Padding="5,0,5,0"
+                   BackgroundColor="{Binding BackColor, Source={x:Reference this}}" >
+
+         <ctrl:WheelView x:Name="WheelViewHour"
+                          MaxValue="24"
+                          Style="{StaticResource templateWheelView}"/>
+
+         <Label Text=":" VerticalOptions="Center" FontAttributes="Bold" Scale="2"/>
+
+         <ctrl:WheelView x:Name="WheelViewMinute"
+                          MaxValue="60"
+                          Style="{StaticResource templateWheelView}"/>
+
+         <Label Text=":" VerticalOptions="Center" FontAttributes="Bold" Scale="2"/>
+
+         <ctrl:WheelView x:Name="WheelViewSecond"
+                          MaxValue="60"
+                          Style="{StaticResource templateWheelView}"/>
+
+      </StackLayout>
+   </ContentView.Content>
+</ContentView>

@@ -4,7 +4,7 @@ using Xamarin.Forms.Xaml;
 
 namespace BatteryCheck {
    public partial class App : Application {
-      public App() {
+      public App(object androidactivity = null) {
          InitializeComponent();
 
          //MainPage = new MainPage();

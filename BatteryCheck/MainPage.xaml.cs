@@ -11,7 +11,7 @@ using Xamarin.Forms;
 namespace BatteryCheck {
    public partial class MainPage : ContentPage {
 
-      const string TITLE = "Batterieüberwachung, © by FSofT 4/2021";
+      const string TITLE = "Batterieüberwachung, © by FSofT 4.5.2022";
 
       const string FIRSTSTARTKEY = "FirstStart";
 
@@ -20,14 +20,16 @@ namespace BatteryCheck {
       const int STDMINALARMPERIOD = 60;
       const int STDMAXALARMPERIOD = 30;
       const bool STDALARMON100Percent = true;
+      const double STDVOLUME = 1;
 
-      List<string> internalAudiofiles = new List<string>();
+      readonly List<string> internalAudiofiles = new List<string>();
 
-      ManualResetEvent mreWait4LoadInternalAudiofiles = new ManualResetEvent(false);
+      readonly ManualResetEvent mreWait4LoadInternalAudiofiles = new ManualResetEvent(false);
 
       string soundMaxAlarm = "";
       string soundMinAlarm = "";
 
+      bool isOnInit = true;
 
       public MainPage() {
          InitializeComponent();
@@ -54,6 +56,8 @@ namespace BatteryCheck {
             DepHelper.MinAlarmPeriod = STDMINALARMPERIOD;
             DepHelper.MaxAlarmPeriod = STDMAXALARMPERIOD;
             DepHelper.AlarmOn100Percent = STDALARMON100Percent;
+            DepHelper.MinAlarmVolume = STDVOLUME;
+            DepHelper.MaxAlarmVolume = STDVOLUME;
             Application.Current.Properties[FIRSTSTARTKEY] = 1;
          }
 
@@ -71,6 +75,7 @@ namespace BatteryCheck {
          soundMinAlarm = DepHelper.MinAlarm;
          soundMaxAlarm = DepHelper.MaxAlarm;
 
+         isOnInit = false;
       }
 
       protected override void OnDisappearing() {
@@ -281,14 +286,18 @@ namespace BatteryCheck {
       }
 
       private void sliderMinPercent_ValueChanged(object sender, ValueChangedEventArgs e) {
-         int value = Math.Max(5, Math.Min(sliderValue(sliderMinPercent), sliderValue(sliderMaxPercent) - 1));     // 5% ...
+         int value = isOnInit ?
+                           sliderValue(sliderMinPercent) :
+                           Math.Max(5, Math.Min(sliderValue(sliderMinPercent), sliderValue(sliderMaxPercent) - 1));     // 5% ...
          sliderMinPercent.Value = value;
          labelMinPercent.Text = string.Format("{0}%", value);
          DepHelper.MinPercent = value;
       }
 
       private void sliderMaxPercent_ValueChanged(object sender, ValueChangedEventArgs e) {
-         int value = Math.Min(Math.Max(sliderValue(sliderMinPercent) + 1, sliderValue(sliderMaxPercent)), 100);   // ... 100%
+         int value = isOnInit ?
+                           sliderValue(sliderMaxPercent) :
+                           Math.Min(Math.Max(sliderValue(sliderMinPercent) + 1, sliderValue(sliderMaxPercent)), 100);   // ... 100%
          sliderMaxPercent.Value = value;
          labelMaxPercent.Text = string.Format("{0}%", value);
          DepHelper.MaxPercent = value;
@@ -314,14 +323,14 @@ namespace BatteryCheck {
          DepHelper.AlarmOn100Percent = checkbox100PercentAlarm.IsChecked;
       }
 
-      async private void buttonSoundMinAlarm_Clicked(object sender, EventArgs e) {
+      private void buttonSoundMinAlarm_Clicked(object sender, EventArgs e) {
          soundChoose = SoundChoose.MinAlarm;
-         chooseSound(soundMinAlarm);
+         chooseSound(soundMinAlarm, volumemin);
       }
 
-      async private void buttonSoundMaxAlarm_Clicked(object sender, EventArgs e) {
+      private void buttonSoundMaxAlarm_Clicked(object sender, EventArgs e) {
          soundChoose = SoundChoose.MaxAlarm;
-         chooseSound(soundMaxAlarm);
+         chooseSound(soundMaxAlarm, volumemax);
       }
 
 
@@ -333,27 +342,32 @@ namespace BatteryCheck {
 
 
       SoundChoose soundChoose = SoundChoose.unknown;
+      double volumemin = 1.0;
+      double volumemax = 1.0;
 
-      async void chooseSound(string orgsound) {
+
+      async void chooseSound(string orgsound, double orgvolume) {
          mreWait4LoadInternalAudiofiles.WaitOne();
 
-         SoundPickPage soundPickPage = new SoundPickPage();
+         FSofTUtils.Xamarin.Page.SoundPickerPage soundPickPage = new FSofTUtils.Xamarin.Page.SoundPickerPage();
          soundPickPage.AddAdditionalAudiofiles(internalAudiofiles);
-         soundPickPage.InitSound(orgsound);
+         soundPickPage.InitSound(orgsound, orgvolume);
          soundPickPage.CloseEvent += SoundPickPage_CloseEvent;
 
          await Navigation.PushAsync(soundPickPage);
       }
 
-      private void SoundPickPage_CloseEvent(object sender, SoundPickPage.CloseEventArgs e) {
+      private void SoundPickPage_CloseEvent(object sender, FSofTUtils.Xamarin.Page.SoundPickerPage.CloseEventArgs e) {
          if (e.NativeSoundData != null) {
             switch (soundChoose) {
                case SoundChoose.MinAlarm:
                   DepHelper.MinAlarm = soundMinAlarm = e.NativeSoundData.Data;
+                  DepHelper.MinAlarmVolume = volumemin = e.Volume;
                   break;
 
                case SoundChoose.MaxAlarm:
                   DepHelper.MaxAlarm = soundMaxAlarm = e.NativeSoundData.Data;
+                  DepHelper.MaxAlarmVolume = volumemax = e.Volume;
                   break;
             }
          }
@@ -367,6 +381,10 @@ namespace BatteryCheck {
 
          soundMinAlarm = DepHelper.MinAlarm = internalAudiofiles[1];
          soundMaxAlarm = DepHelper.MaxAlarm = internalAudiofiles[0];
+
+         volumemin = DepHelper.MinAlarmVolume = 1.0;
+         volumemax = DepHelper.MaxAlarmVolume = 1.0;
+
       }
 
       /// <summary>
