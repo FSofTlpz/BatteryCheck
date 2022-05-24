@@ -7,6 +7,7 @@
 *.txt
 *.vshost.*
 *.odt
+*.idsig
 Sound/
 
 # User-specific files
